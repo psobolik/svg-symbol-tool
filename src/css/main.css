@@ -1,0 +1,128 @@
+@import "notify.css";
+
+:root {
+    --main-color: #dfdfdf;
+    --main-bg-color: #212121;
+
+    --icon-bg-color: #444444;
+    --icon-fill-color: #dfdfdf;
+    --icon-stroke-color: #fdfdfd;
+    --svg-width: 75px;
+
+    color-scheme: light dark;
+    background-color: var(--main-bg-color);
+    color: var(--main-color);
+    font-size: 16pt;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+#header {
+    font-size: 16pt;
+    display: flex;
+}
+
+#header .heading {
+    font-size: xxx-large;
+    font-weight: bold;
+    flex: 1;
+}
+
+#header input {
+    margin-left: 0.5em;
+    height: 2em;
+}
+
+#container {
+    max-width: 880px;
+    margin: auto auto;
+    padding: 1rem;
+}
+
+.icon-container {
+    width: 150px;
+    display: inline-table;
+    text-align: center;
+    padding: 0.5em;
+}
+
+#select-icon-container {
+    display: inline-block;
+}
+
+#select-icon-container .icon-container {
+    width: 50px;
+}
+
+#select-icon-container .svg-container {
+    padding: 0.25em 0.75em;
+}
+
+#select-container {
+    margin: 0.5em 0;
+    border-color: var(--main-color);
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
+}
+#select-container .label-container {
+    display: flex;
+}
+
+#select-container .label-container label {
+    flex: 1;
+    margin: 0.5em;
+    border-bottom-style: solid;
+}
+#select-container .label-container button {
+    margin: 0.5em;
+}
+
+footer {
+    margin: 0.5em;
+    font-size: smaller;
+}
+.svg-container {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.75em;
+    background-color: var(--icon-bg-color);
+    border: solid thin var(--icon-bg-color);
+    border-radius: 10px;
+    /*fill: var(--icon-color);*/
+    padding: 0.75em 1em;
+    display: block;
+}
+
+.no-stroke {
+    stroke: none;
+}
+
+.no-fill {
+    fill: none;
+}
+
+.stroke {
+    stroke: var(--icon-stroke-color);
+}
+
+.fill {
+    fill: var(--icon-fill-color);
+}
+
+.svg-container svg {
+    width: var(--svg-width);
+    height: var(--svg-width);
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --main-color: #323232;
+        --main-bg-color: #ffffff;
+
+        --icon-bg-color: #f4f4f4;
+    }
+}

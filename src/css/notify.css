@@ -1,0 +1,68 @@
+.notify-container {
+  position: absolute;
+  width: 100%;
+  display: none;
+}
+
+.notify {
+  --notify-bg-color: #dfdfdf;
+    --notify-color: #212121;
+
+  background-color: var(--notify-bg-color);
+  color: var(--notify-color);
+  border: solid 3px var(--notify-bg-color);
+  border-radius: 10px;
+  text-align: center;
+  overflow: clip;
+  white-space: nowrap;
+  width: 10em;
+  margin: 1px auto;
+  visibility: hidden;
+  padding: 0.25em;
+}
+
+.notify-animate {
+  display: block;
+  animation-duration: 2s;
+  animation-name: notify-container-animate;
+}
+
+.notify-animate .notify {
+  visibility: visible;
+  animation-duration: 2s;
+  animation-name: notify-animate;
+}
+
+@keyframes notify-animate {
+  from {
+      width: 0;
+      opacity: 0;
+  }
+  30% {
+      width: 13em;
+      opacity: 100%;
+  }
+  60% {
+      width: 12em;
+      opacity: 100%;
+  }
+  to {
+      width: 0;
+      opacity: 0;
+  }
+}
+
+@keyframes notify-container-animate {
+  from {
+      top: 0;
+  }
+  30% {
+      top: 9em;
+  }
+  60% {
+      top: 8em;
+  }
+  to {
+      top: 8em;
+  }
+}

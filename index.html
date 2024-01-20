@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SVG Symbol Tool</title>
+</head>
+
+<body>
+<div id="container" style="visibility: collapse;">
+    <header>
+        <div id="header">
+            <span class="heading" style="display: inline">SVG Symbol Subset Tool</span>
+            <label for="filter-input">Filter:&ensp;</label>
+            <input id="filter-input" type="text" placeholder="Filter"/>
+        </div>
+        <div style="display: flex">
+            <div style="flex: 1">
+                <label for="file-select">Symbol Set:&ensp;</label>
+                <select id="file-select"></select>
+            </div>
+            <div>
+                <label for="stroke">Stroke </label><input type="checkbox" id="stroke"/>
+                <label for="fill">Fill </label><input type="checkbox" id="fill"/>
+            </div>
+        </div>
+    </header>
+    <section style="height: calc(100vh - 161px); overflow-y: scroll;">
+    <div id="select-container">
+        <div class="label-container">
+            <label for="save-button">Selected</label>
+            <button id="save-button">Save</button>
+        </div>
+        <div id="select-icon-container"></div>
+    </div>
+    <div id="symbol-container"></div>
+    </section>
+    <footer class="footer">Copyright © 2024 Paul Sobolik</footer>
+</div>
+<div id="notify-container" class="notify-container" style="visibility: collapse;">
+    <div id="notify" class="notify">SVG File Saved!</div>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
