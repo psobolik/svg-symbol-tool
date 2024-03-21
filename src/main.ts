@@ -1,16 +1,12 @@
-import './css/main.css'
-
 import SvgHelper from "./svg-helper.ts";
+import {invoke} from "@tauri-apps/api/tauri";
 import {save} from "@tauri-apps/api/dialog";
 import {downloadDir} from "@tauri-apps/api/path";
 import Settings from "./settings.ts";
 
 const svgNamespaceUri = 'http://www.w3.org/2000/svg';
 
-window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('container')!.style.visibility = 'visible';
-    getNotifyContainer().style.visibility = 'visible';
-
+window.addEventListener('DOMContentLoaded', async () => {
     const notifyContainer = getNotifyContainer();
     notifyContainer.addEventListener('animationend', _evt => {
         notifyContainer.classList.remove('notify-animate');
@@ -37,6 +33,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     setSelectContainerVisibility();
     setupFileSelect();
+    let footer = document.querySelector("footer") as HTMLElement;
+    footer.textContent = `Copyright © 2024 Paul Sobolik - v${await invoke("version")}`;
 })
 
 function setupFileSelect() {
