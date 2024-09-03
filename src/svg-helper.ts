@@ -3,22 +3,13 @@
  * Created 2024-01-21
  */
 
-import {writeTextFile} from "@tauri-apps/api/fs";
-import {appDataDir, join} from "@tauri-apps/api/path";
-import {convertFileSrc} from "@tauri-apps/api/tauri";
+import {BaseDirectory, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
 
 export default class SvgHelper {
     static async fetchSvgDocument(fileName: string): Promise<Document> {
-        const appDataDirPath = await appDataDir();
-        const appDataFilePath = await join(appDataDirPath, fileName);
-        const dataFileUrl = convertFileSrc(appDataFilePath);
-
-        return await fetch(dataFileUrl, { mode: 'cors' })
-            .then(result => result.text())
-            .then(text => {
-                const domParser = new DOMParser();
-                return domParser.parseFromString(text, "image/svg+xml");
-            })
+        const contents = await readTextFile(fileName, { dir: BaseDirectory.AppData });
+        const domParser = new DOMParser();
+        return domParser.parseFromString(contents, "image/svg+xml");
     }
 
     static async writeSvgElement(filePath: string, svgElement: SVGElement) {

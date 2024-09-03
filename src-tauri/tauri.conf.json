@@ -15,21 +15,17 @@
       "path": {
         "all": true
       },
-      "protocol" : {
-        "asset": true,
-        "assetScope": ["$APPCONFIG/*", "$APPDATA/symbol-sets/*"]
-      },
       "fs": {
         "all": false,
         "copyFile": false,
         "createDir": false,
         "exists": false,
         "readDir": false,
-        "readFile": false,
         "removeDir": false,
         "removeFile": false,
         "renameFile": false,
-        "scope": [],
+        "scope": ["$APPCONFIG/*", "$APPDATA/**/*"],
+        "readFile": true,
         "writeFile": true
       },
       "dialog": {

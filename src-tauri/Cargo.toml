@@ -1,6 +1,6 @@
 [package]
 name = "svg-symbol-tool"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Tauri App"
 authors = ["Paul Sobolik <psobolik@zoho.com>"]
 license = "MIT"
@@ -13,7 +13,7 @@ edition = "2021"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.5", features = [ "fs-write-file", "protocol-asset", "dialog-save", "path-all" ] }
+tauri = { version = "1.5", features = [ "fs-read-file", "fs-write-file", "dialog-save", "path-all" ] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 

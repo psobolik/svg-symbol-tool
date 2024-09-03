@@ -42,7 +42,7 @@ function setupFileSelect() {
     select.addEventListener('change', event => {
         loadSymbols(event.target as HTMLSelectElement);
     })
-    Settings.fetch().then(config => {
+    Settings.fetch().then((config: Settings) => {
         config.symbolSets.forEach(symbolSet => {
             const option = select.appendChild(new Option(symbolSet.display, symbolSet.file));
             if (symbolSet.stroke) option.dataset.stroke = '';
