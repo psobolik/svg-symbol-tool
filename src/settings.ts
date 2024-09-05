@@ -3,7 +3,7 @@
  * Created 2024-01-23
  */
 import SymbolSet from './symbol-set.ts'
-import {readTextFile, BaseDirectory} from '@tauri-apps/api/fs';
+import {BaseDirectory, readTextFile} from '@tauri-apps/api/fs';
 
 export default class Settings {
     public symbolSets: SymbolSet[];
@@ -13,10 +13,8 @@ export default class Settings {
     }
 
     public static async fetch() {
-        // Read the text file in the `$APPCONFIG/settings.json` path
+        // Read and parse contents of `$APPCONFIG/settings.json`
         const contents = await readTextFile('settings.json', { dir: BaseDirectory.AppConfig });
-        const settings = JSON.parse(contents);
-        console.log(settings);
-        return settings;
+        return JSON.parse(contents);
     }
 }

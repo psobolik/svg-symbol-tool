@@ -1,5 +1,3 @@
-@import "notify.css";
-
 :root {
     --main-color: #dfdfdf;
     --main-bg-color: #212121;
@@ -23,10 +21,11 @@ body {
 #header {
     font-size: 16pt;
     display: flex;
+    align-items: end;
 }
 
 #header .heading {
-    font-size: xxx-large;
+    font-size: 32pt;
     font-weight: bold;
     flex: 1;
 }
@@ -36,12 +35,23 @@ body {
     height: 2em;
 }
 
+#controls {
+    margin-top: 0.5em;
+    display: flex;
+    align-items: baseline;
+}
+#controls div:nth-child(1) {
+    flex: 1;
+}
 #container {
     max-width: 880px;
     margin: auto auto;
     padding: 1rem;
 }
-
+#symbol-container {
+    height: 70vh;
+    overflow-y: scroll;
+}
 .icon-container {
     width: 150px;
     display: inline-table;
@@ -81,10 +91,6 @@ body {
     margin: 0.5em;
 }
 
-footer {
-    margin: 0.5em;
-    font-size: smaller;
-}
 .svg-container {
     margin-left: auto;
     margin-right: auto;
@@ -113,6 +119,13 @@ footer {
     fill: var(--icon-fill-color);
 }
 
+.visible {
+    height: auto;
+}
+.invisible {
+    display: none;
+    height: 0;
+}
 .svg-container svg {
     width: var(--svg-width);
     height: var(--svg-width);

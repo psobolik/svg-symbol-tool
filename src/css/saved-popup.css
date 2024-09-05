@@ -1,0 +1,59 @@
+.notify {
+    position: absolute;
+    width: 100%;
+    display: block;
+    animation-duration: 2s;
+    animation-name: notify-animate;
+}
+
+.notify .notification {
+    --notify-bg-color: #dfdfdf;
+    --notify-color: #212121;
+
+    background-color: var(--notify-bg-color);
+    color: var(--notify-color);
+    border: solid 3px var(--notify-bg-color);
+    border-radius: 10px;
+    text-align: center;
+    overflow: clip;
+    white-space: nowrap;
+    width: 10em;
+    margin: 1px auto;
+    padding: 0.25em;
+    animation-duration: 2s;
+    animation-name: notification-animate;
+}
+
+@keyframes notification-animate {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    30% {
+        width: 13em;
+        opacity: 100%;
+    }
+    60% {
+        width: 12em;
+        opacity: 100%;
+    }
+    to {
+        width: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes notify-animate {
+    from {
+        top: 0;
+    }
+    30% {
+        top: 25vh;
+    }
+    60% {
+        top: 20vh;
+    }
+    to {
+        top: 20vh;
+    }
+}
