@@ -3,8 +3,8 @@ import './css/saved-popup.css';
 import React from "react";
 
 interface SavedPopupProps {
-    show: boolean,
-    onDone: () => void
+    show: boolean;
+    onDone: () => void;
 }
 
 const SavedPopup: React.FunctionComponent<SavedPopupProps> = (props) => {

@@ -2,20 +2,20 @@ import React from "react";
 import IconContainer from "./IconContainer.tsx";
 
 interface IconListProps {
-    container_id: string,
-    items: SVGSymbolElement[],
-    stroke: boolean,
-    fill: boolean
-    onItemClick: (element: HTMLElement) => void
+    container_id: string;
+    items: SVGSymbolElement[];
+    stroke: boolean;
+    fill: boolean;
+    selectSymbol: (symbolId: string) => void;
 }
 const IconList: React.FunctionComponent<IconListProps> = (props: IconListProps) => {
     return <div id={props.container_id}>
-        {props.items.map(symbol =>
+        {props.items.map((symbol, key) =>
             <IconContainer
-                onClick={props.onItemClick}
+                key={key}
+                selectSymbol={props.selectSymbol}
                 stroke={props.stroke}
                 fill={props.fill}
-                key={symbol.id}
                 symbol={symbol}/>)
         }
     </div>

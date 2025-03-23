@@ -15,43 +15,38 @@ const App: React.FunctionComponent = () => {
 
     const [availableSymbols, setAvailableSymbols] = React.useState<SVGSymbolElement[]>([]);
     const [selectedSymbols, setSelectedSymbols] = React.useState<SVGSymbolElement[]>([]);
-    const [anySelected, setAnySelected] = React.useState<boolean>(false);
     const [filter, setFilter] = React.useState<string>("");
+    const [symbolSets, setSymbolSets] = React.useState<SymbolSet[]>();
     const [selectedSymbolSet, setSelectedSymbolSet] = React.useState<SymbolSet | undefined>();
-    const [selectedSymbolSetName, setSelectedSymbolSetName] = React.useState<string>("");
     const [stroke, setStroke] = React.useState<boolean>(false);
     const [fill, setFill] = React.useState<boolean>(false);
     const [showSavedPopup, setShowSavedPopup] = React.useState<boolean>(false);
 
+    let is_setup = false;
+
     React.useEffect(() => {
         // React runs one-time effects twice in development, to make sure you have a cleanup function;
-        // This is the recommended rigmarole to work around that for async effects.
-        let is_setup = false;
-        const setupFileSelect = async () => {
-            const config: Settings = await Settings.fetch();
-            if (is_setup) return;
+        // This rigmarole is to work around that.
+        if (is_setup) return;
 
-            const select = document.getElementById('symbol-set-list') as HTMLSelectElement;
-            config.symbolSets.forEach(symbolSet => {
-                const option = select.appendChild(new Option(symbolSet.display, symbolSet.file));
-                option.dataset.symbolSet = JSON.stringify(symbolSet);
-            });
-            if (config.symbolSets.length) setSelectedSymbolSet(config.symbolSets[0]);
-        }
-        setupFileSelect().catch(console.error);
+        Settings.fetch().then((config: Settings) => {
+            setSymbolSets(config.symbolSets);
+        })
         return () => {
             is_setup = true;
         }
     }, []);
+    React.useEffect(() => {
+        if (symbolSets?.length) setSelectedSymbolSet(symbolSets[0]);
+    }, [symbolSets])
     React.useEffect(() => {
         applyFilter()
     }, [availableSymbols, filter])
     React.useEffect(() => {
         loadSymbolSet()
     }, [selectedSymbolSet])
-    React.useEffect(() => {
-        setAnySelected(selectedSymbols.length > 0)
-    }, [selectedSymbols])
+
+    const anySelected = () => selectedSymbols.length > 0;
 
     const loadSymbolSet = () => {
         if (!selectedSymbolSet) return;
@@ -68,25 +63,17 @@ const App: React.FunctionComponent = () => {
             })
     }
 
-    const findIconContainer = (el: HTMLElement): Element | null => {
-        return el?.closest('.icon-container');
-    }
-
-    const selectSymbol = (element: HTMLElement) => {
-        const iconContainer = findIconContainer(element) as HTMLElement;
-        const symbolId = iconContainer.dataset.symbolId!;
+    const selectSymbolId = (symbolId: string) => {
+        // Only select the symbol if it isn't already selected
         if (!selectedSymbols.find(symbol => symbol.dataset.symbolId === symbolId)) {
-            let symbol = iconContainer.firstChild?.firstChild as SVGSymbolElement;
-            symbol.id = symbol.dataset.symbolId!;
+            const symbolContainer = document.getElementById("symbol-container");
+            let symbol = symbolContainer?.querySelector(`svg[data-symbol-id="${symbolId}"]`) as SVGSymbolElement;
+            symbol.id = symbolId;
             setSelectedSymbols([...selectedSymbols, symbol]);
         }
     }
 
-    const unselectSymbol = (el: HTMLElement) => {
-        const iconContainer = findIconContainer(el);
-        if (iconContainer == null) return;
-
-        const symbolId = (iconContainer as HTMLElement).dataset['symbolId']!;
+    const unselectSymbolId = (symbolId: string) => {
         const filtered = selectedSymbols.filter(symbol => symbol.id !== symbolId);
         setSelectedSymbols(filtered);
     }
@@ -105,6 +92,29 @@ const App: React.FunctionComponent = () => {
     }
 
     const handleSave = () => {
+        const getSavePath = async () => {
+            const suggestedFilename = "svg-subset.svg";
+            return await save({
+                defaultPath: `${await downloadDir()}/${suggestedFilename}`, filters: [{
+                    extensions: ['svg'], name: 'SVG Files',
+                }]
+            });
+        }
+
+        const getSaveElement = (): SVGSVGElement | null => {
+            if (!anySelected()) return null;
+
+            const svgElement = document.createElementNS(svgNamespaceUri, 'svg');
+            svgElement.setAttribute('viewBox', `0 0 16 16`); // This is arbitrary.
+
+            selectedSymbols.map(symbol => {
+                const symbolElement = svgElement.appendChild(document.createElementNS(svgNamespaceUri, 'symbol'));
+                symbolElement.id = symbol.dataset.symbolId!;
+                symbolElement.append(...symbol.cloneNode(true).childNodes)
+            })
+            return svgElement;
+        }
+
         const svgElement = getSaveElement();
         if (svgElement == null) return;
 
@@ -116,29 +126,13 @@ const App: React.FunctionComponent = () => {
             })
     }
 
-    const getSavePath = async () => {
-        const suggestedFilename = "svg-subset.svg";
-        return await save({
-            defaultPath: `${await downloadDir()}/${suggestedFilename}`, filters: [{
-                extensions: ['svg'], name: 'SVG Files',
-            }]
-        });
+    const handleSelectSymbolSet = (select: HTMLSelectElement) => {
+        // Select element's value is set to the value of the selected option, but we need to
+        // find the option to get its SymbolSet from its dataset
+        const option = select.querySelector(`option[value='${select.value}']`) as HTMLOptionElement;
+        const symbolSet = JSON.parse(option.dataset.symbolset!) as SymbolSet;
+        setSelectedSymbolSet(symbolSet);
     }
-
-    const getSaveElement = (): SVGSVGElement | null => {
-        if (!anySelected) return null;
-
-        const svgElement = document.createElementNS(svgNamespaceUri, 'svg');
-        svgElement.setAttribute('viewBox', `0 0 16 16`); // This is arbitrary.
-
-        selectedSymbols.map(symbol => {
-            const symbolElement = svgElement.appendChild(document.createElementNS(svgNamespaceUri, 'symbol'));
-            symbolElement.id = symbol.dataset.symbolId!;
-            symbolElement.append(...symbol.cloneNode(true).childNodes)
-        })
-        return svgElement;
-    }
-
     return (<>
         <div id="container">
             <header>
@@ -154,14 +148,18 @@ const App: React.FunctionComponent = () => {
                 <div id="controls">
                     <div>
                         <label htmlFor="symbol-set-list">Symbol Set:&ensp;</label>
-                        <select id="symbol-set-list" value={selectedSymbolSetName}
-                                onChange={(e) => {
-                                    const select = e.target as HTMLSelectElement;
-                                    const option = select.options[select.selectedIndex];
-                                    const symbolSet = JSON.parse(option.dataset.symbolSet!);
-                                    setSelectedSymbolSet(symbolSet);
-                                    setSelectedSymbolSetName(symbolSet.name);
-                                }}></select>
+                        <select id="symbol-set-list"
+                                onChange={event => {
+                                    handleSelectSymbolSet(event.target as HTMLSelectElement)
+                                }}>
+                            {symbolSets?.map((symbolSet, key) => {
+                                return <option key={key}
+                                               value={symbolSet.file}
+                                               data-symbolset={JSON.stringify(symbolSet)}>
+                                    {symbolSet.display}
+                                </option>
+                            })}
+                        </select>
                     </div>
                     <div>
                         <label htmlFor="stroke">Stroke </label>
@@ -176,7 +174,7 @@ const App: React.FunctionComponent = () => {
                 </div>
             </header>
             <section>
-                <div id="select-container" className={anySelected ? "visible" : "invisible"}>
+                <div id="select-container" className={anySelected() ? "visible" : "invisible"}>
                     <div className="label-container">
                         <label htmlFor="save-button">Selected</label>
                         <button id="save-button" onClick={handleSave}>Save</button>
@@ -185,14 +183,14 @@ const App: React.FunctionComponent = () => {
                               stroke={stroke}
                               fill={fill}
                               items={selectedSymbols}
-                              onItemClick={unselectSymbol}
+                              selectSymbol={unselectSymbolId}
                     />
                 </div>
                 <IconList container_id="symbol-container"
                           stroke={stroke}
                           fill={fill}
                           items={availableSymbols}
-                          onItemClick={selectSymbol}
+                          selectSymbol={selectSymbolId}
                 />
             </section>
             <Footer/>
