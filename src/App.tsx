@@ -3,7 +3,7 @@ import './css/app.css';
 import React from "react";
 import Settings from "./settings.ts";
 import SvgHelper from "./svg-helper.ts";
-import {save} from "@tauri-apps/api/dialog";
+import {save} from "@tauri-apps/plugin-dialog";
 import {downloadDir} from "@tauri-apps/api/path";
 import IconList from "./IconList.tsx";
 import SymbolSet from "./symbol-set.ts";
@@ -29,9 +29,9 @@ const App: React.FunctionComponent = () => {
         // This rigmarole is to work around that.
         if (is_setup) return;
 
-        Settings.fetch().then((config: Settings) => {
-            setSymbolSets(config.symbolSets);
-        })
+        Settings.fetch().then((settings: Settings) => {
+            setSymbolSets(settings.symbolSets);
+        }).catch(error => console.error(error));
         return () => {
             is_setup = true;
         }

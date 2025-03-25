@@ -1,7 +1,7 @@
 import './css/footer.css';
 
 import React from "react";
-import {invoke} from "@tauri-apps/api/tauri";
+import {invoke} from "@tauri-apps/api/core";
 
 const Footer: React.FunctionComponent = () => {
     const [footer, setFooter] = React.useState<string>("");

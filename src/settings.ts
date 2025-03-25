@@ -3,18 +3,19 @@
  * Created 2024-01-23
  */
 import SymbolSet from './symbol-set.ts'
-import {BaseDirectory, readTextFile} from '@tauri-apps/api/fs';
+import {readTextFile} from '@tauri-apps/plugin-fs';
+import {appConfigDir, resolve} from "@tauri-apps/api/path";
 
 export default class Settings {
-    public symbolSets: SymbolSet[];
+    static fileName = "settings.json";
+    
+    public symbolSets: SymbolSet[] = [];
 
-    public constructor() {
-        this.symbolSets = [];
-    }
-
-    public static async fetch() {
+    public static async fetch(): Promise<Settings> {
         // Read and parse contents of `$APPCONFIG/settings.json`
-        const contents = await readTextFile('settings.json', { dir: BaseDirectory.AppConfig });
+        const dir = await appConfigDir();
+        const settingsFile = await resolve(dir, Settings.fileName);
+        const contents = await readTextFile(settingsFile);
         return JSON.parse(contents);
     }
 }
