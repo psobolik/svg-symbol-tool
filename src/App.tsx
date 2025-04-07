@@ -110,6 +110,7 @@ const App: React.FunctionComponent = () => {
             selectedSymbols.map(symbol => {
                 const symbolElement = svgElement.appendChild(document.createElementNS(svgNamespaceUri, 'symbol'));
                 symbolElement.id = symbol.dataset.symbolId!;
+                symbolElement.setAttribute("viewBox", symbol.getAttribute("viewBox") ?? "");
                 symbolElement.append(...symbol.cloneNode(true).childNodes)
             })
             return svgElement;
