@@ -11,7 +11,6 @@ import Footer from "./Footer.tsx";
 import SavedPopup from "./SavedPopup.tsx";
 
 const App: React.FunctionComponent = () => {
-    const svgNamespaceUri = 'http://www.w3.org/2000/svg';
 
     const [availableSymbols, setAvailableSymbols] = React.useState<SVGSymbolElement[]>([]);
     const [selectedSymbols, setSelectedSymbols] = React.useState<SVGSymbolElement[]>([]);
@@ -101,28 +100,30 @@ const App: React.FunctionComponent = () => {
             });
         }
 
-        const getSaveElement = (): SVGSVGElement | null => {
-            if (!anySelected()) return null;
+        const getSaveDocument = () => {
+            const svgNamespaceUri = 'http://www.w3.org/2000/svg';
 
-            const svgElement = document.createElementNS(svgNamespaceUri, 'svg');
-            svgElement.setAttribute('viewBox', `0 0 16 16`); // This is arbitrary.
+            // Create an XML document with an svg root node
+            const doc = document.implementation.createDocument(svgNamespaceUri, "svg", null);
+            doc.insertBefore(doc.createProcessingInstruction('xml', 'version="1.0" encoding="UTF-8" standalone="no"'), doc.firstChild);
 
+            // Append a copy of each selected symbol
             selectedSymbols.map(symbol => {
-                const symbolElement = svgElement.appendChild(document.createElementNS(svgNamespaceUri, 'symbol'));
-                symbolElement.id = symbol.dataset.symbolId!;
-                symbolElement.setAttribute("viewBox", symbol.getAttribute("viewBox") ?? "");
+                const symbolElement = doc.documentElement.appendChild(doc.createElementNS(svgNamespaceUri, 'symbol'));
+                symbolElement.id = symbol.id;
+                const viewBox = symbol.getAttribute("viewBox");
+                if (viewBox) symbolElement.setAttribute("viewBox", viewBox);
                 symbolElement.append(...symbol.cloneNode(true).childNodes)
             })
-            return svgElement;
+            return doc;
         }
-
-        const svgElement = getSaveElement();
-        if (svgElement == null) return;
+        if (!anySelected()) return;
 
         getSavePath()
             .then(savePath => {
                 if (savePath == null) return;
-                SvgHelper.writeSvgElement(savePath, svgElement)
+                const svgDocument = getSaveDocument();
+                SvgHelper.writeSvgDocument(savePath, svgDocument)
                     .then(() => setShowSavedPopup(true))
             })
     }

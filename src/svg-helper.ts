@@ -15,14 +15,9 @@ export default class SvgHelper {
         return domParser.parseFromString(text, "image/svg+xml");
     }
 
-    static async writeSvgElement(filePath: string, svgElement: SVGElement) {
-        const xmlDocument = document.implementation.createDocument("", "", null);
-        xmlDocument.insertBefore(xmlDocument.createProcessingInstruction('xml', 'version="1.0" encoding="UTF-8" standalone="no"'), xmlDocument.firstChild);
-
-        xmlDocument.appendChild(svgElement.cloneNode(true));
+    static async writeSvgDocument(filePath: string, svgDocument: XMLDocument) {
         const xmlSerializer = new XMLSerializer();
-        const svgString = xmlSerializer.serializeToString(xmlDocument);
-
-        await writeTextFile(filePath, svgString);
+        const docString = xmlSerializer.serializeToString(svgDocument);
+        await writeTextFile(filePath, docString);
     }
 }
